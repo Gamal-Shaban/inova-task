@@ -24,6 +24,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import AppNavigation from './src/navigation';
+import {PersistGate} from 'redux-persist/integration/react';
+import {persistor, store} from './src/redux/store';
+import {Provider} from 'react-redux';
 
 function Section({children, title}) {
   const isDarkMode = useColorScheme() === 'dark';
@@ -54,8 +57,14 @@ function Section({children, title}) {
 function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <AppNavigation />
+
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor} onBeforeLift={() => {}}>
+          <AppNavigation />
+      </PersistGate>
+    </Provider>
     </SafeAreaView>
+
   );
 }
 
