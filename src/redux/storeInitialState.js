@@ -3,7 +3,10 @@ const initialStates = {
     loading: true,
     homeData: [],
   },
-  details: {},
+  details: {
+    loading: true,
+    data: {},
+  },
 };
 
 export default initialStates;

@@ -25,6 +25,7 @@ export const fetchHomeData = input => {
         const costEffective = data.filter(i => i?.price === '$');
         const bitPrice = data.filter(i => i?.price === '$$');
         const biSpende = data.filter(i => i?.price === '$');
+
         dispatch(homeData({costEffective, bitPrice, biSpende}));
       })
       .catch(err => {

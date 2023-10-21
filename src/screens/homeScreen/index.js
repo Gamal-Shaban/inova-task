@@ -11,11 +11,12 @@ import {
 import Input from '../../components/input';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchHomeData} from '../../redux/actions/home';
-import {allWidthItem} from '../../components/allWidthItem';
+import {AllWidthItem, allWidthItem} from '../../components/allWidthItem';
 import {styles} from './styles';
 import {useDebounce} from 'use-debounce';
 import {Header} from '../../components/header';
 import RNExitApp from 'react-native-exit-app';
+import {useNavigation} from '@react-navigation/native';
 
 export const HomeScreen = () => {
   const {loading, DATA} = useSelector(state => ({
@@ -24,32 +25,36 @@ export const HomeScreen = () => {
   }));
   const dispatch = useDispatch();
   const [input, setInput] = useState(null);
-  const [showGrid, setShowGrid] = useState(null);
+  const {navigate} = useNavigation();
   const [value] = useDebounce(input, 600);
 
   useEffect(() => {
     dispatch(fetchHomeData());
   }, [dispatch]);
 
-  console.log('data?>>>>0', DATA);
   useEffect(() => {
     dispatch(fetchHomeData(value));
   }, [dispatch, value]);
 
-  return (
-    <View style={styles.container}>
-      <Header title={'Restaurant'} onBackPress={() => RNExitApp.exitApp()} />
-      <Input placeholder={'Search'} onChangeText={setInput} />
-      {loading && DATA?.length < 1 ? (
-        <View style={styles.loadingView}>
-          <ActivityIndicator size={'large'} color={'white'} />
-        </View>
-      ) : (
+  const RenderData = () => {
+    console.log('DATA?.length > 0',DATA)
+    if (DATA?.length > 0) {
+      return (
         <SectionList
           sections={DATA}
           keyExtractor={(item, index) => item + index}
           showsVerticalScrollIndicator={false}
-          renderItem={allWidthItem}
+          renderItem={({item}) => (
+            <AllWidthItem
+              item={item}
+              onPress={() =>
+                navigate('Details', {
+                  id: item?.id,
+                  name: item?.name,
+                })
+              }
+            />
+          )}
           contentContainerStyle={styles.contentContainerStyle}
           renderSectionHeader={({section: {title, data}}) => {
             if (data?.length > 0) {
@@ -63,6 +68,26 @@ export const HomeScreen = () => {
             }
           }}
         />
+      );
+    } else {
+      return (
+        <View style={[styles.loadingView, {backgroundColor: 'red'}]}>
+          <Text>No Content</Text>
+        </View>
+      );
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Header title={'Restaurant'} onBackPress={() => RNExitApp.exitApp()} />
+      <Input placeholder={'Search'} onChangeText={setInput} />
+      {loading ? (
+        <View style={styles.loadingView}>
+          <ActivityIndicator size={'large'} color={'white'} />
+        </View>
+      ) : (
+        <RenderData />
       )}
     </View>
   );
