@@ -1,5 +1,8 @@
 const initialStates = {
-  home: {},
+  home: {
+    loading: true,
+    homeData: [],
+  },
   details: {},
 };
 

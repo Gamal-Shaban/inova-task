@@ -1,6 +1,6 @@
 import initialStates from '../storeInitialState';
 
-export default (state = initialStates.home, action) => {
+export default (state = initialStates.details, action) => {
   switch (action.type) {
     default:
       return state;
